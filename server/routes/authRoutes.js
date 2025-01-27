@@ -57,6 +57,21 @@ const verifyToken = async (req, res, next) => {
     }
 }
 
+
+router.get('/profile', verifyToken, async (req, res) => {
+    try {
+      const db = await connectToDatabase();
+      const [rows] = await db.query('SELECT id, username FROM users WHERE id = ?', [req.userId]);
+      if (rows.length === 0) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      return res.status(200).json(rows[0]);
+    } catch (err) {
+      console.error('Error fetching profile data:', err.message);
+      res.status(500).json({ message: 'Internal server error', error: err.message });
+    }
+  });
+  
 router.get('/home', verifyToken, async (req, res) => {
     try {
         const db = await connectToDatabase()

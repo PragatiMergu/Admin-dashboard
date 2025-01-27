@@ -6,7 +6,7 @@ import Donation from './pages/donation';
 import Edit from './pages/edit';
 import Register from './pages/Register';
 import Login from './pages/Login';
-
+import ProfilePage from './pages/profile';
 export default function App() {
   return (
     <BrowserRouter>
@@ -18,6 +18,7 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route path="donation" element={<Donation />} />
         <Route path="edit" element={<Edit />} />
+        <Route path="profile" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   );
