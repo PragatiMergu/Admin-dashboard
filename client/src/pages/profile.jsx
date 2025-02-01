@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Sidebar from "../components/sidebar";
 import { useNavigate } from "react-router";
+
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,17 +14,17 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
-        if (!token) throw new Error('No token found');
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No token found");
 
-        const response = await fetch('http://localhost:3000/auth/profile', {
+        const response = await fetch("http://localhost:3000/auth/profile", {
           headers: {
-            Authorization: `Bearer ${token}`, // Send token in Authorization header
+            Authorization: `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch profile data');
+          throw new Error("Failed to fetch profile data");
         }
 
         const data = await response.json();
@@ -42,58 +43,54 @@ const ProfilePage = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-     <div className="flex flex-col lg:flex-row">
-          {/* Sidebar */}
-          {/* <Sidebar /> */}
-          <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-         
-          <div className="flex-1 bg-gray-50">
-            {/* Navbar */}
-            {/* <Navbar /> */}
-            <Navbar setIsSidebarOpen={setIsSidebarOpen} />
-    
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif',
-      }}
-    >
-         
+    <div className="flex flex-col lg:flex-row">
+      {/* Sidebar */}
+      <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
 
-      <h1>Profile Page</h1>
-      <table style={{ borderCollapse: 'collapse', marginTop: '20px' }}>
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid black', padding: '8px' }}>ID</th>
-            <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {profileData ? (
-            <tr>
-              <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>
-                {profileData.id}
-              </td>
-              <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>
-                {profileData.username}
-              </td>
-            </tr>
-          ) : (
-            <tr>
-              <td colSpan="2" style={{ textAlign: 'center' }}>
-                No data found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <div className="flex-1 bg-gray-50">
+        {/* Navbar */}
+        <Navbar setIsSidebarOpen={setIsSidebarOpen} />
+
+        <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
+          <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md">
+            {/* Profile Image */}
+            <div className="flex flex-col items-center">
+              <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                <span className="text-gray-500 text-xl">No Photo</span>
+              </div>
+              <h2 className="text-2xl font-semibold text-gray-800">{profileData.username}</h2>
+            
+            </div>
+
+            {/* Info Box */}
+            <div className="mt-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-600 font-medium">ID:</span>
+                <span className="text-gray-800">{profileData.id}</span>
+              </div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-600 font-medium">Name:</span>
+                <span className="text-gray-800">{profileData.username}</span>
+              </div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-gray-600 font-medium">Email:</span>
+                <span className="text-gray-800">{profileData.email}</span>
+              </div>
+            </div>
+
+            {/* Edit Button */}
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => Navigate("/edit-profile")}
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition-all"
+              >
+                Edit Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  </div>
   );
 };
 
