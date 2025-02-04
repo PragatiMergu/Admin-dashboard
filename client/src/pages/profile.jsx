@@ -3,12 +3,13 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Sidebar from "../components/sidebar";
 import { useNavigate } from "react-router";
+import axios from "axios";
 
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
@@ -42,6 +43,31 @@ const ProfilePage = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  const deleteProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+  
+      const response = await axios.delete("http://localhost:3000/auth/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      console.log("Profile deleted successfully:", response.data);
+  
+      // Remove token from localStorage after deletion
+      localStorage.removeItem("token");
+  
+      // Navigate to login page
+      navigate("/login");
+    } catch (err) {
+      console.error("Error deleting profile:", err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || "Error deleting profile");
+    }
+  };
+  
+
   return (
     <div className="flex flex-col lg:flex-row">
       {/* Sidebar */}
@@ -59,7 +85,6 @@ const ProfilePage = () => {
                 <span className="text-gray-500 text-xl">No Photo</span>
               </div>
               <h2 className="text-2xl font-semibold text-gray-800">{profileData.username}</h2>
-            
             </div>
 
             {/* Info Box */}
@@ -78,13 +103,19 @@ const ProfilePage = () => {
               </div>
             </div>
 
-            {/* Edit Button */}
-            <div className="mt-6 flex justify-center">
+            {/* Edit & Delete Buttons */}
+            <div className="mt-6 flex justify-center space-x-4">
               <button
-                onClick={() => Navigate("/edit-profile")}
+                onClick={() => navigate("/editprofile")}
                 className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition-all"
               >
                 Edit Profile
+              </button>
+              <button
+                onClick={deleteProfile}
+                className="bg-red-500 text-white py-2 px-4 rounded-lg shadow hover:bg-red-600 transition-all"
+              >
+                Delete Profile
               </button>
             </div>
           </div>

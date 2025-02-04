@@ -71,6 +71,32 @@ export const profile = async (req, res) => {
     }
 };
 
+export const editprofile = async (req, res) => {
+    try {
+        const { username } = req.body;
+        const userId = req.userId; // Ensure this is set from auth middleware
+
+        if (!username) {
+            return res.status(400).json({ message: "Username is required" });
+        }
+
+        const db = await connectToDatabase();
+        const [result] = await db.query(
+            "UPDATE users SET username = ? WHERE id = ?",
+            [username, userId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "User not found or no changes made" });
+        }
+
+        return res.status(200).json({ message: "Profile updated successfully" });
+    } catch (err) {
+        console.error("Error updating profile:", err.message);
+        res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+};
+
 export const home = async (req, res) => {
     try {
         const db = await connectToDatabase();
@@ -84,3 +110,20 @@ export const home = async (req, res) => {
         return res.status(500).json({ message: 'server error' });
     }
 };
+
+export const deleteProfile = async (req, res) => {
+    try {
+      const db = await connectToDatabase();
+      const [result] = await db.query("DELETE FROM users WHERE id = ?", [req.userId]);
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "User not found or no changes made" });
+      }
+  
+      return res.status(200).json({ message: "Profile deleted successfully" });
+    } catch (err) {
+      console.error("Error deleting profile:", err.message);
+      return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+  };
+  
