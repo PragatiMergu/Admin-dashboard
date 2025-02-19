@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
-import Signin from './pages/signin';
+import Signup from './pages/signup';
 import Donation from './pages/donation';
 import Edit from './pages/edit';
 import Register from './pages/Register';
@@ -14,7 +14,7 @@ export default function App() {
     
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="sign-in" element={<Signin />} />
+        <Route path="sign-up" element={<Signup />} />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
         <Route path="donation" element={<Donation />} />

@@ -2,12 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRouter from './routes/authRoutes.js';
-
+import bodyParser from 'body-parser';
 dotenv.config();
 
 const app = express();
 console.log(process.env.PORT);
-
+app.use(bodyParser.json());
 app.use(cors({
     origin: "*",
     methods: ["GET", "POST","PATCH","DELETE"]

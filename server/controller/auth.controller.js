@@ -2,27 +2,106 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { connectToDatabase } from '../lib/db.js';
 
-export const register = async (req, res) => {
+import nodemailer from 'nodemailer';
+
+
+export const signup = async (req, res) => {
     const { username, email, password } = req.body;
     try {
         const db = await connectToDatabase();
         const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
         if (rows.length > 0) {
-            return res.status(409).json({ message: 'user already existed' });
+            return res.status(409).json({ message: 'User already exists' });
         }
         const hashPassword = await bcrypt.hash(password, 10);
-        await db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [
+        await db.query('INSERT INTO users (username, email, password, register) VALUES (?, ?, ?, ?)', [
             username,
             email,
             hashPassword,
+            false,
         ]);
 
-        return res.status(201).json({ message: 'user created successfully' });
+        return res.status(201).json({ message: 'User created successfully' });
     } catch (err) {
-        return res.status(500).json(err.message);
+        return res.status(500).json({ message: err.message });
     }
 };
 
+export const email = async (req, res) => {
+    console.log('Request body:', req.body);
+    const { username, email, phonenumber } = req.body;
+    const userId = req.userId;
+    const HOSTEMAIL=process.env.HOSTEMAIL;
+    const EMAILPASS=process.env.EMAILPASS;
+
+    try {
+        const db = await connectToDatabase();
+        console.log('Database connected successfully');
+
+        const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+        console.log('Query result:', rows);
+
+        if (rows.length === 0 || rows[0].register) {
+            return res.status(400).json({ message: 'User already registered or not found' });
+        }
+
+        // Configure Nodemailer
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: HOSTEMAIL,
+                pass: EMAILPASS,
+            },
+            tls: {
+                rejectUnauthorized: false, // Add this line to bypass certificate validation
+            },
+        });
+
+        await transporter.verify(function (error, success) {
+            if (error) {
+                console.error('Transporter error:', error);
+                throw error;
+            } else {
+                console.log('Server is ready to take our messages');
+            }
+        });
+
+        const mailOptions = {
+            from: HOSTEMAIL,
+            to: email,
+            subject: 'Registration Confirmation',
+            text: `Hello ${username},\nYour registration was successful.\nPhone Number: ${phonenumber}`,
+        };
+
+        // Send Email
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+
+        // Update registration status
+        const updateResult = await db.query('UPDATE users SET register = ? WHERE id = ?', [true, userId]);
+        console.log('Update result:', updateResult);
+
+        return res.status(200).json({ message: 'Email sent and user registered successfully!' });
+    } catch (error) {
+        console.error('Error occurred:', error);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+export const checkRegistration = async (req, res) => {
+    const userId = req.userId;
+    try {
+        const db = await connectToDatabase();
+        const [result] = await db.query('SELECT register FROM users WHERE id = ?', [userId]);
+        if (result.length > 0) {
+            return res.json({ registered: result[0].register });
+        } else {
+            return res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
 export const login = async (req, res) => {
     const { email, password } = req.body;
     try {

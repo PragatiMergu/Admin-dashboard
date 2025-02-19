@@ -29,6 +29,7 @@ const Login = () => {
       setTimeout(() => {
         setError(null);
       }, 5000);
+    
     }
   };
 
@@ -75,7 +76,7 @@ const Login = () => {
         </form>
         <div className="text-center mt-4">
           <span>Don't Have Account? </span>
-          <Link to="/register" className="text-blue-500">Signup</Link>
+          <Link to="/sign-up" className="text-blue-500">Signup</Link>
         </div>
       </div>
     </div>
