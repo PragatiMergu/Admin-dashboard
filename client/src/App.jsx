@@ -1,20 +1,25 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
-import Signup from './pages/signup';
+
 import Donation from './pages/donation';
 import Edit from './pages/edit';
-import Register from './pages/Register';
-import Login from './pages/Login';
+import Register from './pages/register';
+import Login from './pages/login';
 import Profile from './pages/profile';
 import Editprofile from './pages/editprofile';
+import Emailott from './pages/emailott';
+import Loginemailott from './pages/loginemailott';
 export default function App() {
   return (
     <BrowserRouter>
     
       <Routes>
+
         <Route path="/" element={<Home />} />
-        <Route path="sign-up" element={<Signup />} />
+        
+        <Route path="email-ott" element={<Emailott />} />
+        <Route path="login-ott" element={<Loginemailott />} />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
         <Route path="donation" element={<Donation />} />

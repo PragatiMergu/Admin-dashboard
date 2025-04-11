@@ -12,29 +12,29 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchRegistrationStatus = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("No token found");
+ // useEffect(() => {
+   // const fetchRegistrationStatus = async () => {
+   ///   try {
+      //  const token = localStorage.getItem("token");
+    //    if (!token) throw new Error("No token found");
   
-        const response = await axios.get("http://localhost:3000/auth/home", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log(response.data.user.register);
+      //  const response = await axios.get("http://localhost:3000/auth/home", {
+        //  headers: {
+          //  Authorization: `Bearer ${token}`,
+       //   },
+   //     });
+     //   console.log(response.data.user.register);
   
         // Ensure register is handled correctly
-        setIsRegistered(response.data.user.register === 1);
-      } catch (err) {
-        console.error("Error checking registration status:", err.message);
-        setIsRegistered(false); // Fallback to false in case of error
-      }
-    };
+  //      setIsRegistered(response.data.user.register === 1);
+    //  } catch (err) {
+      //  console.error("Error checking registration status:", err.message);
+ //       setIsRegistered(false); // Fallback to false in case of error
+   //   }
+    //};
   
-    fetchRegistrationStatus();
-  }, []);
+   // fetchRegistrationStatus();
+  //}, []);
   
   return (
     <div className="flex flex-col lg:flex-row">
@@ -66,17 +66,8 @@ export default function Home() {
                   className="text-3xl text-gray-600 hover:text-teal-500"
                 />
               </button>
-              {/* Conditionally render the Register button */}
-              {isRegistered === null && <p>Loading...</p>}
-              {isRegistered === false && (
-                <button
-                  onClick={() => navigate("/register")}
-                  className="bg-teal-500 text-white py-2 px-4 rounded-lg shadow hover:bg-teal-600 transition-all"
-                >
-                  Register
-                </button>
-              )}
-              {isRegistered === true && <p className="text-teal-500">You are already registered!</p>}
+              
+             
             </div>
           </div>
 

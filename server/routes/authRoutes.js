@@ -1,13 +1,18 @@
 import express from "express";
 import {
  
-  checkRegistration,
+
   deleteProfile,
   editprofile,
   email,
+  expireOtp,
   home,
   login,
+  loginemail,
   profile,
+ 
+  
+  removeotps,
  
   
   signup,
@@ -23,6 +28,10 @@ router.get("/profile", verifyToken, profile);
 router.get("/home", verifyToken, home);
 router.patch("/editprofile", verifyToken, editprofile);
 router.delete("/profile", verifyToken, deleteProfile);
-router.post("/register",verifyToken,email);
-router.get("/home", verifyToken, checkRegistration);
+router.post("/email",email);
+router.delete("/expire-otp", expireOtp);
+router.delete("/remove-otps",removeotps );
+
+router.post("/loginemail",loginemail);
+
 export default router;

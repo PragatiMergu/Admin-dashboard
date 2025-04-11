@@ -1,10 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 const Login = () => {
+  useEffect(() => {
+    const clearAllOtps = async () => {
+      try {
+        const res = await axios.delete('http://localhost:3000/auth/remove-otps');
+        console.log(res.data.message); // "All OTPs deleted successfully"
+      } catch (err) {
+        console.error("Failed to delete OTPs:", err);
+      }
+    };
+
+    clearAllOtps();
+  }, []);
+
   const [values, setValues] = useState({
     email: '',
+    username:'',
     password: ''
   });
   const [error, setError] = useState(null); // For error message
@@ -17,14 +32,23 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', values);
-      if (response.status === 201) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('email', values.email); // Store email in localStorage
-        navigate('/');
+      const response = await axios.post('http://localhost:3000/auth/loginemail', values);
+      if (response.status === 200 || response.status === 201) {
+        console.log("Successfully registered");
+         navigate("/login-ott"); // Redirect to login OTP page
       }
     } catch (err) {
       setError('Invalid email or password. Please try again.');
+      try {
+   
+        const response = await axios.delete('http://localhost:3000/auth/expire-otp', {
+          data: { email: values.email }
+        });
+        console.log(response.data);
+      } catch (err) {
+        console.error("Failed to delete OTPs:", err);
+      }
+      
       // Clear error after 5 seconds
       setTimeout(() => {
         setError(null);
@@ -62,6 +86,20 @@ const Login = () => {
               onChange={handleChanges}
             />
           </div>
+
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-gray-700">username</label>
+            <input
+              type="text"
+              placeholder="Enter username"
+              className="w-full px-3 py-2 border rounded"
+              name="username"
+              onChange={handleChanges}
+            />
+          </div>
+         
+
+
           <div className="mb-4">
             <label htmlFor="password" className="block text-gray-700">Password</label>
             <input
@@ -76,7 +114,7 @@ const Login = () => {
         </form>
         <div className="text-center mt-4">
           <span>Don't Have Account? </span>
-          <Link to="/sign-up" className="text-blue-500">Signup</Link>
+          <Link to="/register" className="text-blue-500">Signup</Link>
         </div>
       </div>
     </div>
